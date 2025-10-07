@@ -1,7 +1,7 @@
 import os
 from telegram.ext import Updater, CommandHandler
 
-BOT_TOKEN = os.environ.get('8410381008:AAHXkUJcn8jAtfdzAE8d2zBBPArTOlE0ha4')
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 def start(update, context):
     update.message.reply_text('🎉 Бот работает!')
@@ -11,7 +11,8 @@ def main():
         print("❌ Ошибка: BOT_TOKEN не установлен!")
         return
         
-    updater = Updater(BOT_TOKEN, use_context=True)
+    # Убираем use_context - он больше не нужен
+    updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
     
