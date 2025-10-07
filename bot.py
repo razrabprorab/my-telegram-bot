@@ -1,33 +1,23 @@
 import os
-import logging
-from telegram.ext import Updater, CommandHandler
-
-# Включаем логирование
-logging.basicConfig(level=logging.INFO)
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
 
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
-def start(update, context):
-    update.message.reply_text('🎉 Наконец-то работает!')
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('🎉 Бот работает на актуальной версии PTB!')
 
 def main():
     if not BOT_TOKEN:
         print("❌ BOT_TOKEN не установлен!")
         return
+
+    # Создаем приложение с использованием современного API
+    application = Application.builder().token(BOT_TOKEN).build()
+    application.add_handler(CommandHandler("start", start_command))
     
-    try:
-        # Старая стабильная версия
-        updater = Updater(BOT_TOKEN, use_context=True)
-        dp = updater.dispatcher
-        
-        dp.add_handler(CommandHandler("start", start))
-        
-        print("✅ Бот ЗАПУЩЕН!")
-        updater.start_polling()
-        updater.idle()
-        
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
+    print("✅ Бот запущен!")
+    application.run_polling()
 
 if __name__ == '__main__':
     main()
