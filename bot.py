@@ -1,43 +1,40 @@
 import os
+import logging
+import signal
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
-from flask import Flask
-from threading import Thread
 
-# Создаем Flask-приложение для работы с портом
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "Bot is alive!"
-
-def run_flask():
-    # Сервер запускается на порте, который предоставляет Render
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 10000)))
-
-def start_flask():
-    t = Thread(target=run_flask)
-    t.daemon = True  # Поток будет завершен вместе с основным
-    t.start()
+# Настройка логирования
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('🎉 Бот работает!')
+    await update.message.reply_text('🎉 Бот работает на актуальной версии PTB!')
 
 def main():
     if not BOT_TOKEN:
-        print("❌ BOT_TOKEN не установлен!")
+        logger.error("❌ BOT_TOKEN не установлен!")
         return
 
-    # Запускаем HTTP-сервер в фоне
-    start_flask()
-
-    # Запускаем Telegram-бота
+    # Создаем приложение
     application = Application.builder().token(BOT_TOKEN).build()
     application.add_handler(CommandHandler("start", start_command))
     
-    print("✅ Бот запущен!")
+    # Функция для корректного завершения работы
+    def signal_handler(signum, frame):
+        logger.info("Получен сигнал остановки...")
+        application.stop_running()
+
+    # Регистрируем обработчик сигналов
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+    logger.info("✅ Бот запущен!")
     application.run_polling()
 
 if __name__ == '__main__':
