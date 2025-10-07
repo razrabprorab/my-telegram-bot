@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import random
 import os
+import asyncio
 
 # Получаем токен из переменных окружения с запасным вариантом
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '8410381008:AAHXkUJcn8jAtfdzAE8d2zBBPArTOlE0ha4')
@@ -38,7 +39,12 @@ def main():
     
     # Запускаем бота
     print("✅ Бот запущен на Render!")
-    app.run_polling()
+    
+    # Современный способ запуска
+    app.run_polling(
+        allowed_updates=Update.ALL_TYPES,
+        drop_pending_updates=True
+    )
 
 if __name__ == '__main__':
     main()
