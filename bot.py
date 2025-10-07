@@ -4,7 +4,7 @@ import random
 import os
 
 # Получаем токен из переменных окружения с запасным вариантом
-BOT_TOKEN = os.environ.get('BOT_TOKEN', 'ТВОЙ_ТОКЕН_ЗДЕСЬ')
+BOT_TOKEN = os.environ.get('BOT_TOKEN', '8410381008:AAHXkUJcn8jAtfdzAE8d2zBBPArTOlE0ha4')
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -28,11 +28,6 @@ async def info_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🤖 Этот бот размещен на Render.com и работает 24/7!")
 
 def main():
-    # Проверяем наличие токена
-    if not BOT_TOKEN or BOT_TOKEN == 'ТВОЙ_ТОКЕН_ЗДЕСЬ':
-        print("❌ Ошибка: BOT_TOKEN не установлен!")
-        return
-    
     # Создаем приложение
     app = Application.builder().token(BOT_TOKEN).build()
     
